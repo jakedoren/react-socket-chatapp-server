@@ -23,7 +23,11 @@ io.on('connection', (socket) => {
 
       socket.join(user.room)
 
-      socket.broadcast.to(user.room).emit('message', `${user.username} has joined the Chat!`)
+      const messageObj = {
+        body: `${user.username} has entered the chat!`
+      }
+
+      socket.broadcast.to(user.room).emit('message', messageObj)
 
       console.log(`${userObj.name} entered room ${userObj.room}`)
     })
