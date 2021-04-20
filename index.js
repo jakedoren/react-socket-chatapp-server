@@ -10,7 +10,7 @@ const io = socket(server, {
     }
   });
 const PORT = process.env.PORT || 8080;
-const { userJoin, getCurrentUser } = require('./users')
+const { userJoin, getCurrentUser, userLeave } = require('./users')
 
 
 // Runs when the client connects
@@ -24,7 +24,7 @@ io.on('connection', (socket) => {
       socket.join(user.room)
 
       const messageObj = {
-        body: `${user.username} has entered the chat!`
+        body: `${user.username} has entered the chat!`,
       }
 
       socket.broadcast.to(user.room).emit('message', messageObj)
@@ -35,12 +35,23 @@ io.on('connection', (socket) => {
     socket.emit('your id', socket.id);
 
     socket.on('send message', body => {
-      const user = getCurrentUser(socket.id)
+        const user = getCurrentUser(socket.id)
+        console.log(body)
         io.to(user.room).emit('message', body)
     })
 
-    socket.on('disconnect', () => console.log(`${socket.id} has disconnected`))
+    socket.on('disconnect', () => {
+      const user = userLeave(socket.id)
 
+      console.log(`${user.username} has left the chat`)
+      const messageObj = {
+        body: `${user.username} has left the chat :-(`
+      }
+
+      if(user) {
+        io.to(user.room).emit('message', messageObj)
+      }
+    })
 
 })
 
