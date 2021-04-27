@@ -19,7 +19,7 @@ io.on('connection', (socket) => {
     console.log('a user has connected');
 
     socket.on('join', userObj => {
-      const user = userJoin(socket.id, userObj.name, userObj.room)
+      const user = userJoin(socket.id, userObj.userVal, userObj.room)
 
       socket.join(user.room)
 
@@ -27,9 +27,15 @@ io.on('connection', (socket) => {
         body: `${user.username} has entered the chat!`,
       }
 
+      const messageObj2 = {
+        body: `Welcome to ${user.room}, ${user.username}`
+      }
+
+      socket.emit('message', messageObj2)
+
       socket.broadcast.to(user.room).emit('message', messageObj)
 
-      console.log(`${userObj.name} entered room ${userObj.room}`)
+      console.log(`${userObj.userVal} entered room ${userObj.room}`)
     })
 
     socket.emit('your id', socket.id);
