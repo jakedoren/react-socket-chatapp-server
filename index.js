@@ -10,7 +10,7 @@ const io = socket(server, {
     }
   });
 const PORT = process.env.PORT || 8080;
-const { userJoin, getCurrentUser, userLeave } = require('./users')
+const { userJoin, getCurrentUser, userLeave, getRoomUsers } = require('./users')
 
 
 // Runs when the client connects
@@ -32,6 +32,13 @@ io.on('connection', (socket) => {
       }
 
       socket.emit('message', messageObj2)
+
+      const roomInfo = {
+        room: user.room,
+        users: getRoomUsers(user.room)
+      }
+
+      io.to(user.room).emit('roomUsers', roomInfo)
 
       socket.broadcast.to(user.room).emit('message', messageObj)
 
@@ -56,7 +63,13 @@ io.on('connection', (socket) => {
 
       if(user) {
         io.to(user.room).emit('message', messageObj)
+        io.to(user.room).emit('roomUsers', {room: user.room, users: getRoomUsers(user.room)})
       }
+
+      // io.to(user.room).emit('roomUsers', {
+      //   room: user.room,
+      //   users: getRoomUsers(user.room)
+      // })
     })
 
 })
