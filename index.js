@@ -14,7 +14,9 @@ const PORT = process.env.PORT || 8080;
 const { userJoin, getCurrentUser, userLeave, getRoomUsers } = require('./users')
 
 app.use(cors())
-
+app.get('/', (req, res) => {
+  res.send('<h1>Server is up and running</h1>')
+})
 // Runs when the client connects
 
 io.on('connection', (socket) => {
