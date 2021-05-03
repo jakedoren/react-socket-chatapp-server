@@ -25,10 +25,6 @@ io.on('connection', (socket) => {
     socket.on('join', userObj => {
       const user = userJoin(socket.id, userObj.userVal, userObj.room)
 
-      if(user.room == undefined) {
-        socket.disconnect(true)
-      }
-
       socket.join(user.room)
 
       const messageObj = {
@@ -58,7 +54,11 @@ io.on('connection', (socket) => {
     socket.on('send message', body => {
         const user = getCurrentUser(socket.id)
         console.log(body)
-        io.to(user.room).emit('message', body)
+        if(user.room == undefined) {
+          socket.disconnect(true)
+        } else {
+          io.to(user.room).emit('message', body)
+        }
     })
 
     socket.on('disconnect', () => {
