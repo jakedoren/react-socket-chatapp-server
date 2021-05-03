@@ -54,7 +54,7 @@ io.on('connection', (socket) => {
     socket.on('send message', body => {
         const user = getCurrentUser(socket.id)
         console.log(body)
-        if(user.room == undefined) {
+        if(user.room == null) {
           socket.disconnect(true)
         } else {
           io.to(user.room).emit('message', body)
