@@ -21,6 +21,10 @@ io.on('connection', (socket) => {
     socket.on('join', userObj => {
       const user = userJoin(socket.id, userObj.userVal, userObj.room)
 
+      if(user.room == undefined) {
+        socket.disconnect(true)
+      }
+
       socket.join(user.room)
 
       const messageObj = {
